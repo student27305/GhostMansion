@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8612139249488327427}
   - component: {fileID: 8817626180701038439}
   m_Layer: 3
-  m_Name: Yellow Ghost
+  m_Name: Enemy Ghost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
