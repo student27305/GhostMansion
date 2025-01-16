@@ -6,6 +6,8 @@ TagManager:
   tags:
   - PatrolPosition
   - MainMenu
+  - Enemy
+  - LevelManager
   layers:
   - Default
   - TransparentFX

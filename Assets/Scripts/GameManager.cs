@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,11 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-
-
     const int Easy = 0;
     const int Normal = 1;
     const int Hard = 2;
+
+    const int Enemies_Easy = 3;
+    const int Enemies_Normal = 5;
+    const int Enemies_Hard = 7;
+
+    LevelManager _levelManager;
 
     public static GameManager Instance { get; private set; }
 
@@ -20,6 +25,7 @@ public class GameManager : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(this);
         }
         else { Destroy(this); }
     }
@@ -43,11 +49,17 @@ public class GameManager : MonoBehaviour
     void GoToMainMenu()
     {
         SceneManager.LoadScene(0);
+        RefreshSubscriptions();
     }
 
     void ChangeDifficulty(int difficulty)
     {
         Difficulty = difficulty;
+    }
+
+    void SetupLevel()
+    {
+        
     }
 
     void SubscribeToMainMenu()
@@ -61,8 +73,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void OnLevelWasLoaded(int level)
+    void SubscriveToLevelManager()
+    {
+        GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+        _levelManager = levelManager.GetComponent<LevelManager>();
+    }
+
+    void RefreshSubscriptions() // Oh no!
     {
         SubscribeToMainMenu();
+        SubscriveToLevelManager();
     }
+    private void OnLevelWasLoaded(int level)
+    {
+        RefreshSubscriptions();
+        if (level == 1) { SetupLevel(); }
+    }
+
 }
