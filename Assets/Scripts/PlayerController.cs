@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -22,6 +23,16 @@ public class PlayerController : MonoBehaviour
     NavMeshAgent _agent;
     Item _heldItem;
 
+    IEnumerator _deathCoroutine;
+    bool _isAlive = true;
+
+    public UnityEvent PlayerDiedEvent { get; private set; }
+
+    void Awake()
+    {
+        _deathCoroutine = DeathRoutine();
+        PlayerDiedEvent = new UnityEvent();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -96,8 +107,27 @@ public class PlayerController : MonoBehaviour
     {
         _agent.SetDestination(position);
     }
-    void Die()
-    {
 
+    IEnumerator DeathRoutine()
+    {
+        yield return new WaitForSeconds(2f);
+        PlayerDiedEvent.Invoke();
+    }
+
+    public void Die()
+    {
+        if (_isAlive)
+        {
+            _isAlive = false;
+            _agent.isStopped = true;
+            _agent.autoRepath = false;
+            _agent.speed = 0;
+            _agent.enabled = false;
+            transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            Material renderedMaterial = GetComponent<Renderer>().material;
+            renderedMaterial.color = Color.red;
+            StartCoroutine(DeathRoutine());
+            
+        }
     }
 }

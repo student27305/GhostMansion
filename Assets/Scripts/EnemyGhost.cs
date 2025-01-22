@@ -17,6 +17,8 @@ public class EnemyGhost : MonoBehaviour
     float _chaseLostSightDuration = 3f;
     [SerializeField]
     float _patrolDestinationReachedThreshold = 1.5f;
+    [SerializeField]
+    float _catchDistance = 1f;
 
     float _timeSinceLastSpoted = 0f;
     float _timeSinceLostSightOfPlayer = 0f;
@@ -71,6 +73,11 @@ public class EnemyGhost : MonoBehaviour
         if (_timeSinceLostSightOfPlayer >= _chaseLostSightDuration) 
         {
             StartPatrol();
+        }
+        if (_hasLineOfSightToPlayer && Vector3.Distance(transform.position,_player.transform.position) <= _catchDistance) 
+        { 
+            PlayerController playerController = _player.GetComponent<PlayerController>();
+            playerController.Die();
         }
     }
 

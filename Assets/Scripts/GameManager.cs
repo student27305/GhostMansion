@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     const int Enemies_Hard = 7;
 
     LevelManager _levelManager;
+    PlayerController _player;
 
     public static GameManager Instance { get; private set; }
 
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
     }
     void GameOver()
     {
-
+        GameOverUI.Instance.DisplayScreen();
     }
     void QuitGame()
     {
@@ -62,6 +63,16 @@ public class GameManager : MonoBehaviour
         
     }
 
+    void OnExitReached()
+    {
+        WinGame();
+    }
+
+    void WinGame()
+    {
+        SceneManager.LoadScene(2);
+    }
+
     void SubscribeToMainMenu()
     {
         MainMenu mainMenu = GameObject.FindWithTag("MainMenu")?.GetComponent<MainMenu>();
@@ -79,13 +90,28 @@ public class GameManager : MonoBehaviour
         _levelManager = levelManager.GetComponent<LevelManager>();
     }
 
+    void SubscribeToExit()
+    {
+        Exit exit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Exit>();
+        exit.PlayerReachedExitEvent.AddListener(OnExitReached);
+    }
+
     void RefreshSubscriptions() // Oh no!
     {
         SubscribeToMainMenu();
         SubscriveToLevelManager();
+        SubscribeToExit();
     }
+
+    void OnPlayerDied()
+    {
+        GameOver();
+    }
+
     private void OnLevelWasLoaded(int level)
     {
+        _player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        _player.PlayerDiedEvent.AddListener(OnPlayerDied);
         RefreshSubscriptions();
         if (level == 1) { SetupLevel(); }
     }
